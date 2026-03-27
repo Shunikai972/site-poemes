@@ -1,4 +1,9 @@
-const POEMS=[
+/* ============================================================
+   ASTRO LUCIFER — script.js (optimisé)
+   ============================================================ */
+
+// ─── DATA ────────────────────────────────────────────────────────────────────
+const POEMS = [
   {id:'p1',title:"Jamais d'été",number:'I',color:'#00f5ff',gc:'gcyan',
    spine:'linear-gradient(180deg,#0a1a2e,#0d2d4a,#091a2e)',w:28,h:180,
    stanzas:[
@@ -27,12 +32,12 @@ const POEMS=[
     ["Les horloges faisaient semblant, le temps voulait me piéger","J'ai couru après les heures pour poursuivre ton parfum","J'ai laissé mes promesses dans le bruit des freins","J'me suis lancé dans une bataille que je pouvais pas gagner, y a des murs de pierre, des victoires amères"],
     ["Y a ton nom sur ma raison, y a ton parfum dans mon salon","Y a des victoires amères mais dans nos cœurs, ma défaite c'est notre maison"]
   ]},
-  {id:'p3',title:'Et si j\'me tais',number:'III',color:'#ffd700',gc:'ggold',
+  {id:'p3',title:"Et si j'me tais",number:'III',color:'#ffd700',gc:'ggold',
    spine:'linear-gradient(180deg,#1a1500,#2e2500,#1a1500)',w:32,h:190,
    stanzas:[
     ["Et si j'me tais parfois, c'est pas par lâcheté","C'est que certaines vérités demandent l'éternité","Sur le quai d'une gare trop grise, j'suis resté figé","À aimer ton absence comme une façon d'exister."]
   ]},
-  {id:'p4',title:'La vie m\'attriste',number:'IV',color:'#b44fff',gc:'gpurple',
+  {id:'p4',title:"La vie m'attriste",number:'IV',color:'#b44fff',gc:'gpurple',
    spine:'linear-gradient(180deg,#150a2e,#23104a,#150a2e)',w:25,h:160,
    stanzas:[
     ["La vie m'attriste, ton nom sur mes lèvres","Le compte et l'moral à zéro","Dans les coups durs comme dans l'biff, tout est négocié","J'm'en fous du paradis si t'es pas invitée"],
@@ -45,7 +50,7 @@ const POEMS=[
     ["Les horloges faisaient semblant, le temps voulait me piéger","J'ai couru après les heures pour poursuivre ton parfum","J'ai laissé mes promesses dans le bruit des freins","J'me suis lancé dans une bataille que je pouvais pas gagner, y a des murs de pierre, des victoires amères"],
     ["Y a ton nom sur ma raison, y a ton parfum dans mon salon","Y a des victoires amères mais dans nos cœurs, ma défaite c'est notre maison"]
   ]},
-  {id:'p5',title:'J\'ai du sang',number:'V',color:'#00ff96',gc:'ggreen',
+  {id:'p5',title:"J'ai du sang",number:'V',color:'#00ff96',gc:'ggreen',
    spine:'linear-gradient(180deg,#001a0f,#002d1a,#001a0f)',w:30,h:175,
    stanzas:[
     ["J'ai du sang dans l'crâne, la peine dans mes textes","J'me suis tranché les veines pour y verser d'l'espoir","Réfléchis pas si tu m'connais ou pas, chacun d'mes mots tourne dans l'cortex","La douleur soulève les voix, pourtant j'ai plus les mots"],
@@ -57,14 +62,14 @@ const POEMS=[
     ["Tu peux pas ressentir la peine","Depuis ce jour j'suis plus le même"],
     ["J'ai le flacon, j'ai l'ivresse, j'ai la détresse, ma trinité est réunie, j'ai plus qu'à prier"]
   ]},
-  {id:'p6',title:'L\'univers sans étoiles',number:'VI',color:'#00f5ff',gc:'gcyan',
+  {id:'p6',title:"L'univers sans étoiles",number:'VI',color:'#00f5ff',gc:'gcyan',
    spine:'linear-gradient(180deg,#041520,#071e2e,#041520)',w:28,h:170,
    stanzas:[
     ["L'univers sans étoiles serait morose","Soleil de mon infini, j'ai besoin de ma dose","De toi je veux être l'osmose","Étoile silencieuse au milieu du cosmos"],
     ["Cœur glacé, sol aride","Météore glacé, sang qui gicle sans s'épancher","Crime passionnel commis dans la Voie lactée"],
     ["Sans tes mots, je me perds. Parce que sans toi, mon âme est nue.","Fixe-moi et regarde dans mes yeux, nos étoiles seront gravées en lettres de feu"]
   ]},
-  {id:'p7',title:'Des fois l\'matin',number:'VII',color:'#ff2d78',gc:'gpink',
+  {id:'p7',title:"Des fois l'matin",number:'VII',color:'#ff2d78',gc:'gpink',
    spine:'linear-gradient(180deg,#200615,#34091e,#200615)',w:26,h:180,
    stanzas:[
     ["Des fois l'matin j'me lève et j'repense à toi, à elles, à ces moments éphémères","Des fois l'matin j'me lève et j'me dis qu'j'aurais souhaité jamais savoir dire « je t'aime »","Des fois j'me lève l'matin, j'repense à toutes les putains qu'j'ai vesk et à toutes celles qu'j'esquiverai jamais"],
@@ -92,7 +97,7 @@ const POEMS=[
     ["Un autre s'est joint et foule nous fûmes.","La bonté ne s'acquiert pas, elle est innée.","Mais il ne faut jamais cesser de la partager."],
     ["L'air vivace s'engouffra dans ses poumons.","L'ange était sauvé."]
   ]},
-  {id:'p9',title:'Au milieu d\'une app',number:'IX',color:'#b44fff',gc:'gpurple',
+  {id:'p9',title:"Au milieu d'une app",number:'IX',color:'#b44fff',gc:'gpurple',
    spine:'linear-gradient(180deg,#10062a,#1a0c42,#10062a)',w:27,h:172,
    stanzas:[
     ["Au milieu d'une app de merde, j'me suis fait des amis","Embrouilles et problèmes s'ont rejoints","Ils ont balayé mes dernières réticences à tirer sur un joint","C'est plus qu'une descente en enfer"],
@@ -101,7 +106,7 @@ const POEMS=[
     ["Sous l'feu des kalash, y en a qui tombent","Sous les coups de mes pensées, je crie","J'dois être malade ou pas complètement conscient"],
     ["Y avait un fou en face de moi, j'l'ai pris pour mon frère","Double meurtre plus tard, j'sais toujours pas c'que j'dois faire","J'ose plus m'regarder dans un miroir","Même mon reflet est plus beau qu'oim"]
   ]},
-  {id:'p10',title:'Des fois l\'matin (II)',number:'X',color:'#00ff96',gc:'ggreen',
+  {id:'p10',title:"Des fois l'matin (II)",number:'X',color:'#00ff96',gc:'ggreen',
    spine:'linear-gradient(180deg,#001810,#00281a,#001810)',w:23,h:178,
    stanzas:[
     ["Des fois l'matin j'me lève et j'repense à toi, à elles, à ces moments éphémères","Des fois l'matin j'me lève et j'me dis qu'j'aurais souhaité jamais savoir dire « je t'aime »","Des fois j'me lève l'matin, j'repense à toutes les putains qu'j'ai vesk et à toutes celles qu'j'esquiverai jamais"],
@@ -134,7 +139,7 @@ const POEMS=[
     ["Pourtant, ce qu'il voyait, c'était ses yeux, sa moue boudeuse et la beauté de son âme, qui resplendissait bien plus fort."],
     ["Loin des salles de cours, de leurs lampes halogènes,","Il aurait dû l'appeler et lui dire 'Allô j't'aime'.","Dans un dernier souffle, il murmure son nom tandis que le poignard qui traverse ses côtes finit de teindre les roses,","Blanches."]
   ]},
-  {id:'p13',title:'Le port d\'Olonne',number:'XIII',color:'#ffd700',gc:'ggold',
+  {id:'p13',title:"Le port d'Olonne",number:'XIII',color:'#ffd700',gc:'ggold',
    spine:'linear-gradient(180deg,#1e1400,#2e2000,#1e1400)',w:24,h:176,
    stanzas:[
     ["Sur le quai du port d'Olonne, les pieds dans le sable chaud, elle s'abandonne à la douleur","Vivant un rêve-cauchemar éveillée, elle ne songe plus qu'à se noyer, la pauvre enfant"],
@@ -147,7 +152,7 @@ const POEMS=[
    stanzas:[
     ["Fourrure dans la nuit,","Griffes et crocs","Mort sauvage"]
   ]},
-  {id:'p15',title:'Brise-moi l\'cœur',number:'XV',color:'#00ff96',gc:'ggreen',
+  {id:'p15',title:"Brise-moi l'cœur",number:'XV',color:'#00ff96',gc:'ggreen',
    spine:'linear-gradient(180deg,#001810,#00281a,#001810)',w:23,h:185,
    stanzas:[
     ["Brise-moi l'cœur une fois de plus, je dirai rien","Prends-le, détruis-le, dans tous les cas il t'appartient"],
@@ -158,7 +163,7 @@ const POEMS=[
     ["Quoi que j'fasse, plus je t'aime, plus je t'aime mal"],
     ["Mes démons ont pris mes pensées en otage","Je hais ces blessures qu'ils t'ont infligées et qui traverseront les âges","J'ai jamais voulu t'emprisonner","Le plus beau chez la colombe, c'est sa liberté"]
   ]},
-  {id:'p16',title:'J\'lâche pas la plume',number:'XVI',color:'#00f5ff',gc:'gcyan',
+  {id:'p16',title:"J'lâche pas la plume",number:'XVI',color:'#00f5ff',gc:'gcyan',
    spine:'linear-gradient(180deg,#041520,#071e2e,#041520)',w:28,h:210,
    stanzas:[
     ["J'lâche pas la plume, ma main s'crispe","J'lâche mes as, j'veux parler à l'âme d'ma dame de cœur","Qu'ça soit dans la vie ou quand on joue aux échecs, c'est toi ma reine","J'sais pas trop comment t'le dire, j'préfère te l'faire ressentir"],
@@ -204,7 +209,7 @@ const POEMS=[
     ["Avant qu'j'aie fini de parler, un des mecs m'a dit \"plainte classée\".","Il y a quelques mois, je dansais sur la piste.","Et bientôt, des avis de décès, j'me fondrai dans les listes."],
     ["Mon histoire presque terminée, j'lâche ma plume de métal teintée vermeil, d'ma peau le sang émerge.","D'mes poignets, les rubis coulent et viennent tacher le sol encore vierge."]
   ]},
-  {id:'p19',title:'J\'écris pour une fille',number:'XIX',color:'#b44fff',gc:'gpurple',
+  {id:'p19',title:"J'écris pour une fille",number:'XIX',color:'#b44fff',gc:'gpurple',
    spine:'linear-gradient(180deg,#10062a,#1a0c42,#10062a)',w:27,h:190,
    stanzas:[
     ["J'écris pour une fille qu'au fond j'connais pas","Pour une fille qui pour son ego s'soumet pas","J'ai brisé ma plume, fumé ma thune","Pour écouter ma peine, y restera que la lune"],
@@ -217,13 +222,13 @@ const POEMS=[
   ]}
 ];
 
-const SHELVES=[
-  {label:'Amours & Promesses',poems:[0,1,2,3,4,5]},
-  {label:'Nuit & Rêves',poems:[6,7,8,9,10,11]},
+const SHELVES = [
+  {label:'Amours & Promesses', poems:[0,1,2,3,4,5]},
+  {label:'Nuit & Rêves',       poems:[6,7,8,9,10,11]},
   {label:'Souffrance & Révolte',poems:[12,13,14,15,16,17,18]}
 ];
 
-const FLOAT_VERSES=[
+const FLOAT_VERSES = [
   {t:"Je est un autre",a:"Rimbaud",c:'#00f5ff'},
   {t:"Ma Bohème — Ô là là ! que d'amours splendides j'ai rêvées !",a:"Rimbaud",c:'#b44fff'},
   {t:"Ô saisons, ô châteaux !",a:"Rimbaud",c:'#ff2d78'},
@@ -277,397 +282,344 @@ const FLOAT_VERSES=[
   {t:"La vie est une lutte contre les forces qui nous conduisent au repos.",a:"Valéry",c:'#b44fff'},
 ];
 
-// ─── State ───────────────────────────────────────────────────────────────────
-let mX=innerWidth/2, mY=innerHeight/2;
-let cX=mX, cY=mY, rX=mX, rY=mY;
-let activePoem=null;
-let currentTipTarget=null;
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let mX = innerWidth/2, mY = innerHeight/2;
+let cX = mX, cY = mY, rX = mX, rY = mY;
+let activePoem = null;
+let currentTipTarget = null;
 
-const $cur=document.getElementById('cur');
-const $ring=document.getElementById('cur-ring');
-const $bookTip=document.getElementById('book-tip');
+const $cur     = document.getElementById('cur');
+const $ring    = document.getElementById('cur-ring');
+const $bookTip = document.getElementById('book-tip');
 
-// ─── Mouse (passive, no extra rAF) ───────────────────────────────────────────
-document.addEventListener('mousemove',e=>{mX=e.clientX;mY=e.clientY},{passive:true});
+// ─── MOUSE ───────────────────────────────────────────────────────────────────
+document.addEventListener('mousemove', e => { mX = e.clientX; mY = e.clientY; }, {passive:true});
 
-// ─── Single shared rAF loop: cursor + particles ───────────────────────────────
-let particleTick=null;
-(function mainLoop(){
-  requestAnimationFrame(mainLoop);
-  // Cursor lerp
-  cX+=(mX-cX)*.22; cY+=(mY-cY)*.22;
-  rX+=(mX-rX)*.1;  rY+=(mY-rY)*.1;
-  // GPU-composited transform instead of left/top (avoids layout)
-  $cur.style.transform=`translate(${Math.round(cX)-5}px,${Math.round(cY)-5}px)`;
-  $ring.style.transform=`translate(${Math.round(rX)-17}px,${Math.round(rY)-17}px)`;
-  // Particle draw (set by initParticles)
-  if(particleTick) particleTick();
+// ─── SINGLE MASTER rAF LOOP ───────────────────────────────────────────────────
+// cursor lerp + particles — nothing else runs its own rAF on the main page
+let _particleTick = null;
+
+(function masterLoop() {
+  requestAnimationFrame(masterLoop);
+
+  // Cursor (transform only — no layout thrash)
+  cX += (mX - cX) * .18; cY += (mY - cY) * .18;
+  rX += (mX - rX) * .09; rY += (mY - rY) * .09;
+  $cur.style.transform  = `translate(${cX|0}px,${cY|0}px)`;
+  $ring.style.transform = `translate(${rX|0}px,${rY|0}px)`;
+
+  if (_particleTick) _particleTick();
 })();
 
-function hov(on){document.body.classList.toggle('hov',on)}
+function hov(on) { document.body.classList.toggle('hov', on); }
 
-// ─── Floating Verses ──────────────────────────────────────────────────────────
-// Pure CSS animation; no JS collision detection (was O(n²) each spawn)
-function initFloatingVerses(){
-  const cont=document.getElementById('floating-verses');
+// ─── PARTICLES ───────────────────────────────────────────────────────────────
+function initParticles() {
+  const cv  = document.getElementById('pc');
+  const ctx = cv.getContext('2d');
+  const COLS = ['#00f5ff','#ff2d78','#b44fff','#ffd700','#00ff96'];
 
-  function spawnVerse(){
-    const v=FLOAT_VERSES[Math.floor(Math.random()*FLOAT_VERSES.length)];
-    const el=document.createElement('div');
-    el.className='fv';
+  function resize() { cv.width = innerWidth; cv.height = innerHeight; }
+  resize();
+  let _rt; window.addEventListener('resize', () => { clearTimeout(_rt); _rt = setTimeout(resize, 200); }, {passive:true});
 
-    const startX=5+Math.random()*88;
-    const startY=8+Math.random()*80;
-    const tx=(Math.random()-.5)*160;
-    const ty=(Math.random()-.5)*100;
-    const rot=(Math.random()-.5)*6;
-    const dur=18+Math.random()*22;
-    const maxOp=0.28+Math.random()*0.22;
-    const fs=11+Math.random()*5;
-
-    el.style.cssText=`left:${startX}%;top:${startY}%;color:${v.c};--rot:${rot}deg;--tx:${tx}px;--ty:${ty}px;--max-op:${maxOp};animation-duration:${dur}s;text-shadow:0 0 15px ${v.c},0 0 40px ${v.c}60;font-size:${fs}px;`;
-
-    const authorEl=document.createElement('span');
-    authorEl.style.cssText=`display:block;font-family:'Space Mono',monospace;font-style:normal;font-size:.55em;letter-spacing:.3em;opacity:.6;margin-top:3px;color:${v.c};`;
-    authorEl.textContent='— '+v.a;
-    el.textContent=v.t;
-    el.appendChild(authorEl);
-    cont.appendChild(el);
-
-    // Cleanup after animation ends
-    setTimeout(()=>{el.parentNode&&el.parentNode.removeChild(el)},(dur+2)*1000);
-  }
-
-  // Stagger 12 initial verses (reduced from all 51)
-  for(let i=0;i<12;i++) setTimeout(spawnVerse, i*1600);
-  // Slower interval: 3.5s instead of 2.8s
-  setInterval(spawnVerse, 3500);
-}
-
-// ─── Particles ────────────────────────────────────────────────────────────────
-// Merged into mainLoop. Count reduced 80→45. Connections use d² (no sqrt in filter).
-function initParticles(){
-  const cv=document.getElementById('pc');
-  const ctx=cv.getContext('2d');
-  const COLS=['#00f5ff','#ff2d78','#b44fff','#ffd700','#00ff96'];
-
-  function rs(){cv.width=innerWidth;cv.height=innerHeight}
-  rs();
-  let resizeTimer;
-  window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(rs,200)},{passive:true});
-
-  const COUNT=45;
-  const pts=Array.from({length:COUNT},()=>({
-    x:Math.random()*cv.width, y:Math.random()*cv.height,
-    vx:(Math.random()-.5)*.28, vy:(Math.random()-.5)*.28,
-    r:Math.random()*1.2+.25,
-    c:COLS[Math.floor(Math.random()*COLS.length)],
-    a:Math.random()*.38+.07,
-    ph:Math.random()*Math.PI*2, ps:Math.random()*.014+.003
+  // 40 particles (was 80)
+  const N = 40;
+  const pts = Array.from({length: N}, () => ({
+    x: Math.random() * cv.width,  y: Math.random() * cv.height,
+    vx: (Math.random()-.5)*.25,   vy: (Math.random()-.5)*.25,
+    r:  Math.random()*1.1+.2,
+    c:  COLS[Math.floor(Math.random()*COLS.length)],
+    a:  Math.random()*.35+.07,
+    ph: Math.random()*Math.PI*2,
+    ps: Math.random()*.012+.003
   }));
 
-  const THRESH2=90*90; // squared threshold — no sqrt needed in filter pass
+  const D2 = 80*80; // connection threshold² (skip sqrt in hot path)
 
-  particleTick=function(){
-    const W=cv.width, H=cv.height;
-    ctx.clearRect(0,0,W,H);
+  _particleTick = () => {
+    const W = cv.width, H = cv.height;
+    ctx.clearRect(0, 0, W, H);
 
-    for(let i=0;i<COUNT;i++){
-      const p=pts[i];
-      p.ph+=p.ps;
-      const al=p.a*(.5+.5*Math.sin(p.ph));
-      ctx.globalAlpha=al;
-      ctx.shadowColor=p.c; ctx.shadowBlur=8;
-      ctx.fillStyle=p.c;
-      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.2832); ctx.fill();
+    // Draw particles
+    for (let i = 0; i < N; i++) {
+      const p = pts[i];
+      p.ph += p.ps;
+      const al = p.a * (.5 + .5 * Math.sin(p.ph));
 
-      if(!activePoem){
-        const dx=mX-p.x, dy=mY-p.y, d2=dx*dx+dy*dy;
-        if(d2<16900){const d=Math.sqrt(d2); p.vx+=dx/d*.006; p.vy+=dy/d*.006;}
+      ctx.globalAlpha = al;
+      ctx.shadowColor = p.c; ctx.shadowBlur = 7;
+      ctx.fillStyle   = p.c;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.2832); ctx.fill();
+
+      // Mouse repel only when library visible
+      if (!activePoem) {
+        const dx = mX-p.x, dy = mY-p.y, d2 = dx*dx+dy*dy;
+        if (d2 < 14400) { const d = Math.sqrt(d2); p.vx += dx/d*.005; p.vy += dy/d*.005; }
       }
-      p.vx*=.993; p.vy*=.993;
-      p.x=(p.x+p.vx+W)%W;
-      p.y=(p.y+p.vy+H)%H;
+      p.vx *= .993; p.vy *= .993;
+      p.x = (p.x + p.vx + W) % W;
+      p.y = (p.y + p.vy + H) % H;
     }
 
-    // Connections: O(n²) with n=45 → ~990 checks, threshold check is cheap
-    ctx.shadowBlur=0;
-    ctx.lineWidth=.4;
-    for(let i=0;i<COUNT-1;i++){
-      for(let j=i+1;j<COUNT;j++){
-        const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
-        const d2=dx*dx+dy*dy;
-        if(d2<THRESH2){
-          ctx.globalAlpha=(1-Math.sqrt(d2)/90)*.05;
-          ctx.strokeStyle=pts[i].c;
+    // Connections (n=40 → 780 pairs, cheap d² filter)
+    ctx.shadowBlur = 0; ctx.lineWidth = .35;
+    for (let i = 0; i < N-1; i++) {
+      for (let j = i+1; j < N; j++) {
+        const dx = pts[i].x-pts[j].x, dy = pts[i].y-pts[j].y;
+        const d2 = dx*dx+dy*dy;
+        if (d2 < D2) {
+          ctx.globalAlpha = (1 - Math.sqrt(d2)/80) * .05;
+          ctx.strokeStyle = pts[i].c;
           ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke();
         }
       }
     }
-    ctx.globalAlpha=1;
+    ctx.globalAlpha = 1; ctx.shadowBlur = 0;
   };
 }
 
-// ─── Library build ────────────────────────────────────────────────────────────
-function buildLibrary(){
-  const lib=document.getElementById('lib');
-  const frag=document.createDocumentFragment();
+// ─── FLOATING VERSES ─────────────────────────────────────────────────────────
+// Pure CSS animation — no JS collision, no activeVerses array
+function initFloatingVerses() {
+  const cont = document.getElementById('floating-verses');
 
-  SHELVES.forEach((sh,si)=>{
-    const shelf=document.createElement('div');
-    shelf.className='shelf';
-    shelf.style.cssText=`opacity:0;transform:translateY(30px);transition:opacity .85s ${si*.25+.3}s,transform .85s ${si*.25+.3}s`;
+  function spawn() {
+    const v   = FLOAT_VERSES[Math.floor(Math.random() * FLOAT_VERSES.length)];
+    const el  = document.createElement('div');
+    el.className = 'fv';
+    const sx  = 4 + Math.random()*88,  sy  = 8 + Math.random()*78;
+    const tx  = (Math.random()-.5)*140, ty = (Math.random()-.5)*90;
+    const rot = (Math.random()-.5)*6;
+    const dur = 18 + Math.random()*20;
+    const mop = .25 + Math.random()*.22;
+    const fs  = 11 + Math.random()*5;
 
-    const lbl=document.createElement('div');
-    lbl.className='slbl';
-    lbl.textContent=sh.label;
+    el.style.cssText = `left:${sx}%;top:${sy}%;color:${v.c};--rot:${rot}deg;--tx:${tx}px;--ty:${ty}px;--max-op:${mop};animation-duration:${dur}s;text-shadow:0 0 14px ${v.c},0 0 36px ${v.c}55;font-size:${fs}px;`;
 
-    const row=document.createElement('div');
-    row.className='sbooks';
+    const auth = document.createElement('span');
+    auth.style.cssText = `display:block;font-family:'Space Mono',monospace;font-style:normal;font-size:.55em;letter-spacing:.3em;opacity:.6;margin-top:3px;color:${v.c};`;
+    auth.textContent = '— ' + v.a;
+    el.textContent = v.t;
+    el.appendChild(auth);
+    cont.appendChild(el);
 
-    sh.poems.forEach((pi,bi)=>{
-      row.appendChild(makeBook(POEMS[pi],bi));
-      if(bi===0||bi===2) row.appendChild(makeDecor());
+    setTimeout(() => el.parentNode && el.parentNode.removeChild(el), (dur + 2) * 1000);
+  }
+
+  // 10 staggered initially (was 51 all at once)
+  for (let i = 0; i < 10; i++) setTimeout(spawn, i * 1800);
+  setInterval(spawn, 4000); // slower spawn rate
+}
+
+// ─── LIBRARY BUILD ────────────────────────────────────────────────────────────
+function buildLibrary() {
+  const lib  = document.getElementById('lib');
+  const frag = document.createDocumentFragment();
+
+  SHELVES.forEach((sh, si) => {
+    const shelf = document.createElement('div');
+    shelf.className = 'shelf';
+    shelf.style.cssText = `opacity:0;transform:translateY(30px);transition:opacity .85s ${si*.25+.3}s,transform .85s ${si*.25+.3}s`;
+
+    const lbl = document.createElement('div');
+    lbl.className = 'slbl';
+    lbl.textContent = sh.label;
+
+    const row = document.createElement('div');
+    row.className = 'sbooks';
+
+    sh.poems.forEach((pi, bi) => {
+      row.appendChild(makeBook(POEMS[pi]));
+      if (bi === 0 || bi === 2) row.appendChild(makeDecor());
     });
 
-    const plank=document.createElement('div');
-    plank.className='splank';
-    shelf.append(lbl,row,plank);
+    const plank = document.createElement('div');
+    plank.className = 'splank';
+    shelf.append(lbl, row, plank);
     frag.appendChild(shelf);
   });
 
   lib.appendChild(frag);
-  // Batch DOM read, then trigger animations in next 2 frames
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    lib.querySelectorAll('.shelf').forEach(s=>{s.style.opacity='1';s.style.transform='translateY(0)'});
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    lib.querySelectorAll('.shelf').forEach(s => { s.style.opacity = '1'; s.style.transform = 'translateY(0)'; });
   }));
 }
 
-// ─── Book Tip ─────────────────────────────────────────────────────────────────
-// Uses transform instead of left/top to stay on GPU layer
-function updateBookTipPosition(book){
-  if(!book||!$bookTip.classList.contains('visible')) return;
-  const rect=book.getBoundingClientRect();
-  const tipW=170, tipH=96, gap=14, pad=12;
-  let left=rect.left;
-  if(left<pad) left=pad;
-  if(left+tipW>innerWidth-pad) left=innerWidth-pad-tipW;
-  let top=rect.top-tipH-gap;
-  if(top<pad) top=pad;
-  $bookTip.style.transform=`translate(${Math.round(left)}px,${Math.round(top)}px)`;
+// ─── BOOK TIP ─────────────────────────────────────────────────────────────────
+function _tipPos(book) {
+  const r = book.getBoundingClientRect();
+  const W = innerWidth, tipW = 170, tipH = 96, gap = 14, pad = 12;
+  let left = Math.max(pad, Math.min(r.left, W - pad - tipW));
+  let top  = Math.max(pad, r.top - tipH - gap);
+  $bookTip.style.transform = `translate(${left|0}px,${top|0}px)`;
 }
 
-function showBookTip(book,poem){
-  $bookTip.style.setProperty('--bc',poem.color);
-  $bookTip.innerHTML=`<span class="bc-num">Poème ${poem.number}</span><span class="bc-title">${poem.title}</span><span class="bc-hint"><span class="bc-dot"></span>Cliquer pour lire</span>`;
-  currentTipTarget=book;
-  updateBookTipPosition(book);
-  requestAnimationFrame(()=>$bookTip.classList.add('visible'));
+function showBookTip(book, poem) {
+  $bookTip.style.setProperty('--bc', poem.color);
+  $bookTip.innerHTML = `<span class="bc-num">Poème ${poem.number}</span><span class="bc-title">${poem.title}</span><span class="bc-hint"><span class="bc-dot"></span>Cliquer pour lire</span>`;
+  currentTipTarget = book;
+  _tipPos(book);
+  requestAnimationFrame(() => $bookTip.classList.add('visible'));
 }
+function hideBookTip() { $bookTip.classList.remove('visible'); currentTipTarget = null; }
 
-function hideBookTip(){
-  $bookTip.classList.remove('visible');
-  currentTipTarget=null;
-}
+// ─── BOOK ELEMENT ─────────────────────────────────────────────────────────────
+function makeBook(poem) {
+  const book  = document.createElement('div');
+  book.className = `book ${poem.gc}`;
 
-// ─── Book DOM ─────────────────────────────────────────────────────────────────
-function makeBook(poem){
-  const book=document.createElement('div');
-  book.className=`book ${poem.gc}`;
+  const spine = document.createElement('div');
+  spine.className = 'bspine';
+  spine.style.cssText = `width:${poem.w}px;height:${poem.h}px;background:${poem.spine};box-shadow:inset -3px 0 7px rgba(0,0,0,.45),inset 1px 0 2px rgba(255,255,255,.04),inset 0 0 0 1px rgba(255,255,255,.025)`;
 
-  const spine=document.createElement('div');
-  spine.className='bspine';
-  spine.style.cssText=`width:${poem.w}px;height:${poem.h}px;background:${poem.spine};box-shadow:inset -3px 0 7px rgba(0,0,0,.45),inset 1px 0 2px rgba(255,255,255,.04),inset 0 0 0 1px rgba(255,255,255,.025)`;
+  const s1 = document.createElement('div');
+  s1.style.cssText = `position:absolute;top:0;left:0;right:0;height:4px;background:${poem.color};opacity:.7;box-shadow:0 0 10px ${poem.color},0 0 20px ${poem.color}60`;
 
-  const strip=document.createElement('div');
-  strip.style.cssText=`position:absolute;top:0;left:0;right:0;height:4px;background:${poem.color};opacity:.7;box-shadow:0 0 10px ${poem.color},0 0 20px ${poem.color}60`;
+  const s2 = document.createElement('div');
+  s2.style.cssText = `position:absolute;bottom:0;left:0;right:0;height:2px;background:${poem.color};opacity:.3;box-shadow:0 0 6px ${poem.color}`;
 
-  const strip2=document.createElement('div');
-  strip2.style.cssText=`position:absolute;bottom:0;left:0;right:0;height:2px;background:${poem.color};opacity:.3;box-shadow:0 0 6px ${poem.color}`;
+  const stitle = document.createElement('span');
+  stitle.className = 'bst';
+  stitle.textContent = poem.title;
 
-  const stitle=document.createElement('span');
-  stitle.className='bst';
-  stitle.textContent=poem.title;
-  spine.append(strip,stitle,strip2);
+  spine.append(s1, stitle, s2);
   book.append(spine);
 
-  book.addEventListener('click',()=>openPoem(poem));
-  book.addEventListener('mouseenter',()=>{hov(true);showBookTip(book,poem)});
-  book.addEventListener('mousemove',()=>updateBookTipPosition(book),{passive:true});
-  book.addEventListener('mouseleave',()=>{hov(false);hideBookTip()});
+  book.addEventListener('click',       () => openPoem(poem));
+  book.addEventListener('mouseenter',  () => { hov(true);  showBookTip(book, poem); });
+  book.addEventListener('mousemove',   () => _tipPos(book), {passive:true});
+  book.addEventListener('mouseleave',  () => { hov(false); hideBookTip(); });
 
   return book;
 }
 
-function makeDecor(){
-  const d=document.createElement('div');
-  d.className='decor';
-  d.textContent=['◈','✦','◆','✧','⬡'][Math.floor(Math.random()*5)];
-  d.style.animationDelay=Math.random()*3+'s';
+function makeDecor() {
+  const d = document.createElement('div');
+  d.className = 'decor';
+  d.textContent = ['◈','✦','◆','✧','⬡'][Math.floor(Math.random()*5)];
+  d.style.animationDelay = Math.random()*3 + 's';
   return d;
 }
 
-// ─── Parallax: rAF-throttled ──────────────────────────────────────────────────
-function initParallax(){
-  let ticking=false, lastRx=0, lastRy=0;
-  const shelves=()=>document.querySelectorAll('.shelf');
-  const orbs=()=>document.querySelectorAll('.orb');
-
-  document.addEventListener('mousemove',e=>{
-    lastRx=(e.clientX-innerWidth/2)/(innerWidth/2);
-    lastRy=(e.clientY-innerHeight/2)/(innerHeight/2);
-    if(!ticking){
-      ticking=true;
-      requestAnimationFrame(()=>{
-        shelves().forEach((sh,i)=>{
-          const d=(i+1)*.6;
-          sh.style.transform=`translateX(${lastRx*d*7}px) translateY(${lastRy*d*2.5}px) rotateY(${lastRx*d*.5}deg)`;
-        });
-        orbs().forEach((o,i)=>{
-          const f=(i+1)*24;
-          o.style.transform=`translate(${lastRx*f}px,${lastRy*f}px)`;
-        });
-        ticking=false;
+// ─── PARALLAX (rAF-throttled) ─────────────────────────────────────────────────
+function initParallax() {
+  let ticking = false, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    rx = (e.clientX - innerWidth/2)  / (innerWidth/2);
+    ry = (e.clientY - innerHeight/2) / (innerHeight/2);
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(() => {
+        // Only move shelves when overlay is closed
+        if (!activePoem) {
+          document.querySelectorAll('.shelf').forEach((sh, i) => {
+            const d = (i+1)*.6;
+            sh.style.transform = `translateX(${rx*d*7}px) translateY(${ry*d*2.5}px) rotateY(${rx*d*.5}deg)`;
+          });
+          document.querySelectorAll('.orb').forEach((o, i) => {
+            const f = (i+1)*24;
+            o.style.transform = `translate(${rx*f}px,${ry*f}px)`;
+          });
+        }
+        ticking = false;
       });
     }
-  },{passive:true});
+  }, {passive:true});
 }
 
-// ─── Poem overlay ─────────────────────────────────────────────────────────────
-function openPoem(poem){
-  const ov=document.getElementById('pov');
-  const pw=document.getElementById('pwrap');
-  pw.style.setProperty('--pc',poem.color);
+// ─── POEM OVERLAY ─────────────────────────────────────────────────────────────
+// KEY FIXES:
+//  1. NO canvas inside the poem (was launching its own rAF + creating radial gradient every frame)
+//  2. NO setTimeout per line — CSS animation-delay handles stagger (zero JS timers)
+//  3. Poem overlay pauses particle rendering (activePoem flag)
 
-  pw.innerHTML=`
-    <canvas id="ppcv"></canvas>
-    <button class="pcls" id="cbtn">✕</button>
-    <div class="phdr">
-      <span class="pnum">Poème ${poem.number}</span>
-      <h2 class="ptitle">${poem.title}</h2>
-      <div class="pdiv">
-        <div class="pdiv-line"></div>
-        <span class="pdiv-gem">◆</span>
-        <div class="pdiv-line"></div>
-      </div>
-    </div>
-    <div class="pbody" id="pbody"></div>
-  `;
+function openPoem(poem) {
+  const ov = document.getElementById('pov');
+  const pw = document.getElementById('pwrap');
+  pw.style.setProperty('--pc', poem.color);
 
-  const body=document.getElementById('pbody');
-  const frag=document.createDocumentFragment();
-  poem.stanzas.forEach((lines,si)=>{
-    const sDiv=document.createElement('div');
-    sDiv.className='pstanza';
-    lines.forEach((line,li)=>{
-      const span=document.createElement('span');
-      span.className='pline'+(li===0?' first':'');
-      span.textContent=line;
+  // Build HTML — no canvas, no ppcv
+  const frag = document.createDocumentFragment();
+
+  // Header
+  const hdr = document.createElement('div');
+  hdr.className = 'phdr';
+  hdr.innerHTML = `
+    <span class="pnum">Poème ${poem.number}</span>
+    <h2 class="ptitle">${poem.title}</h2>
+    <div class="pdiv"><div class="pdiv-line"></div><span class="pdiv-gem">◆</span><div class="pdiv-line"></div></div>`;
+
+  // Close btn
+  const cb = document.createElement('button');
+  cb.className = 'pcls'; cb.id = 'cbtn'; cb.textContent = '✕';
+  cb.addEventListener('click',      closePoem);
+  cb.addEventListener('mouseenter', () => hov(true));
+  cb.addEventListener('mouseleave', () => hov(false));
+
+  // Body — use CSS custom-property delay instead of setTimeout
+  const body = document.createElement('div');
+  body.className = 'pbody';
+  let lineIdx = 0;
+  poem.stanzas.forEach((lines, si) => {
+    const sDiv = document.createElement('div');
+    sDiv.className = 'pstanza';
+    lines.forEach((line, li) => {
+      const span = document.createElement('span');
+      span.className = 'pline' + (li === 0 ? ' first' : '');
+      span.textContent = line;
+      // CSS animation-delay per line — no JS timers at all
+      span.style.setProperty('--li', lineIdx++);
       sDiv.appendChild(span);
     });
-    frag.appendChild(sDiv);
-    if(si<poem.stanzas.length-1){
-      const sep=document.createElement('div');
-      sep.className='stanza-sep';
-      sep.textContent='✦  ✦  ✦';
-      frag.appendChild(sep);
+    body.appendChild(sDiv);
+    if (si < poem.stanzas.length - 1) {
+      const sep = document.createElement('div');
+      sep.className = 'stanza-sep';
+      sep.textContent = '✦  ✦  ✦';
+      body.appendChild(sep);
     }
   });
-  body.appendChild(frag);
 
-  initPoemCanvas(poem.color);
+  frag.append(cb, hdr, body);
+
+  // Clear and insert
+  pw.innerHTML = '';
+  pw.appendChild(frag);
+
   ov.classList.add('on');
-  document.body.style.overflow='hidden';
-  activePoem=poem;
-
-  requestAnimationFrame(()=>{
-    const lines=pw.querySelectorAll('.pline');
-    lines.forEach((l,i)=>setTimeout(()=>l.classList.add('vis'),150+i*55));
-  });
-
-  const cb=document.getElementById('cbtn');
-  cb.addEventListener('click',closePoem);
-  cb.addEventListener('mouseenter',()=>hov(true));
-  cb.addEventListener('mouseleave',()=>hov(false));
+  document.body.style.overflow = 'hidden';
+  activePoem = poem;
 }
 
-function closePoem(){
+function closePoem() {
   document.getElementById('pov').classList.remove('on');
-  document.body.style.overflow='';
+  document.body.style.overflow = '';
   hov(false);
-  activePoem=null;
+  activePoem = null;
 }
-document.getElementById('pbdrop').addEventListener('click',closePoem);
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&activePoem)closePoem()});
 
-// ─── Poem canvas (self-contained loop, auto-stops on close) ───────────────────
-function initPoemCanvas(color){
-  const cv=document.getElementById('ppcv');
-  if(!cv) return;
-  const wrap=document.getElementById('pwrap');
-  cv.width=wrap.clientWidth;
-  cv.height=wrap.clientHeight;
-  const ctx=cv.getContext('2d');
+document.getElementById('pbdrop').addEventListener('click', closePoem);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && activePoem) closePoem(); });
 
-  const hex=color.replace('#','');
-  const r=parseInt(hex.slice(0,2),16), g=parseInt(hex.slice(2,4),16), b=parseInt(hex.slice(4,6),16);
-
-  // 20 particles instead of 30
-  const pts=Array.from({length:20},()=>({
-    x:Math.random()*cv.width, y:cv.height+Math.random()*80,
-    vx:(Math.random()-.5)*.35, vy:-(Math.random()*.45+.18),
-    r:Math.random()*1.6+.35, a:Math.random()*.45+.18
-  }));
-
-  let running=true;
-  const pov=document.getElementById('pov');
-
-  function draw(){
-    if(!running) return;
-    requestAnimationFrame(draw);
-    ctx.clearRect(0,0,cv.width,cv.height);
-
-    const grd=ctx.createRadialGradient(cv.width/2,cv.height*.5,cv.width*.2,cv.width/2,cv.height*.5,cv.width*.7);
-    grd.addColorStop(0,`rgba(${r},${g},${b},0)`);
-    grd.addColorStop(1,`rgba(${r},${g},${b},0.04)`);
-    ctx.fillStyle=grd; ctx.fillRect(0,0,cv.width,cv.height);
-
-    ctx.shadowColor=color; ctx.shadowBlur=9;
-    ctx.fillStyle=color;
-    for(let i=0;i<pts.length;i++){
-      const p=pts[i];
-      p.x+=p.vx; p.y+=p.vy; p.vx*=.998;
-      if(p.y<-10){p.x=Math.random()*cv.width;p.y=cv.height+5;p.vx=(Math.random()-.5)*.35;p.vy=-(Math.random()*.45+.15);}
-      ctx.globalAlpha=p.a;
-      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.2832); ctx.fill();
-    }
-    ctx.globalAlpha=1; ctx.shadowBlur=0;
+// ─── FLICKER (CSS class, not style mutation) ──────────────────────────────────
+function startFlicker() {
+  function flk() {
+    const books = document.querySelectorAll('.bspine');
+    if (books.length) books[Math.floor(Math.random()*books.length)].classList.add('flicker');
+    setTimeout(() => document.querySelectorAll('.bspine.flicker').forEach(b => b.classList.remove('flicker')), 150);
+    setTimeout(flk, Math.random()*3000 + 800);
   }
-  draw();
-
-  const obs=new MutationObserver(()=>{if(!pov.classList.contains('on')){running=false;obs.disconnect();}});
-  obs.observe(pov,{attributes:true,attributeFilter:['class']});
+  setTimeout(flk, 4000);
 }
 
-// ─── Flicker: CSS class instead of inline style mutation ─────────────────────
-function startFlicker(){
-  function flk(){
-    const books=document.querySelectorAll('.bspine');
-    if(!books.length){setTimeout(flk,2000);return;}
-    books[Math.floor(Math.random()*books.length)].classList.add('flicker');
-    setTimeout(()=>document.querySelectorAll('.bspine.flicker').forEach(b=>b.classList.remove('flicker')),160);
-    setTimeout(flk,Math.random()*3000+700);
-  }
-  setTimeout(flk,3500);
-}
+// ─── RESIZE / SCROLL (passive) ────────────────────────────────────────────────
+window.addEventListener('resize', () => { if (currentTipTarget) _tipPos(currentTipTarget); }, {passive:true});
+window.addEventListener('scroll', () => { if (currentTipTarget) _tipPos(currentTipTarget); }, {passive:true});
 
-// ─── Resize / scroll: passive listeners ──────────────────────────────────────
-window.addEventListener('resize',()=>{if(currentTipTarget)updateBookTipPosition(currentTipTarget)},{passive:true});
-window.addEventListener('scroll',()=>{if(currentTipTarget)updateBookTipPosition(currentTipTarget)},{passive:true});
-
-// ─── Boot ─────────────────────────────────────────────────────────────────────
-window.addEventListener('load',()=>{
-  setTimeout(()=>{
+// ─── BOOT ─────────────────────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  setTimeout(() => {
     document.getElementById('loader').classList.add('gone');
     buildLibrary();
     document.body.classList.add('loaded');
@@ -675,5 +627,5 @@ window.addEventListener('load',()=>{
     initParallax();
     initFloatingVerses();
     startFlicker();
-  },1500);
+  }, 1500);
 });
