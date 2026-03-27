@@ -389,3 +389,50 @@ footer{
   animation:decor-float 6s ease-in-out infinite;
 }
 @keyframes decor-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+/* ── PERFORMANCE PATCH — ajouter à la fin de style.css ── */
+
+/* Cursor : supprime left/top (layout), utilise transform (GPU) */
+#cur {
+  left: 0 !important;
+  top: 0 !important;
+  will-change: transform;
+}
+#cur-ring {
+  left: 0 !important;
+  top: 0 !important;
+  will-change: transform;
+}
+
+/* Book-tip : positionné via transform désormais (plus de left/top dynamique) */
+#book-tip.book-card {
+  left: 0 !important;
+  top: 0 !important;
+  will-change: transform;
+  /* Remplace le transform de base du fichier original */
+  transform: translate(0px, 6px) scale(.95);
+}
+#book-tip.book-card.visible {
+  transform: translate(0px, 0px) scale(1); /* JS override via style.transform */
+}
+
+/* Flicker : géré par classe CSS, plus de mutation de style inline */
+.bspine.flicker {
+  opacity: .3 !important;
+  transition: opacity .05s !important;
+}
+
+/* Floating verses : will-change pour éviter les repaints */
+.fv {
+  will-change: transform, opacity;
+  contain: layout style;
+}
+
+/* Books : contenir les repaint à l'élément hover */
+.book {
+  contain: layout;
+}
+
+/* Canvas particles : isolation de layer */
+#pc {
+  will-change: contents;
+}

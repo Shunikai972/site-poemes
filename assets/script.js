@@ -277,147 +277,142 @@ const FLOAT_VERSES=[
   {t:"La vie est une lutte contre les forces qui nous conduisent au repos.",a:"Valéry",c:'#b44fff'},
 ];
 
-let mX=innerWidth/2,mY=innerHeight/2,cX=mX,cY=mY,rX=mX,rY=mY;
+// ─── State ───────────────────────────────────────────────────────────────────
+let mX=innerWidth/2, mY=innerHeight/2;
+let cX=mX, cY=mY, rX=mX, rY=mY;
 let activePoem=null;
 let currentTipTarget=null;
 
 const $cur=document.getElementById('cur');
 const $ring=document.getElementById('cur-ring');
 const $bookTip=document.getElementById('book-tip');
-const activeVerses=[];
 
-document.addEventListener('mousemove',e=>{mX=e.clientX;mY=e.clientY});
-(function tick(){
-  cX+=(mX-cX)*.22;cY+=(mY-cY)*.22;
-  rX+=(mX-rX)*.1;rY+=(mY-rY)*.1;
-  $cur.style.left=cX+'px';$cur.style.top=cY+'px';
-  $ring.style.left=rX+'px';$ring.style.top=rY+'px';
-  requestAnimationFrame(tick);
+// ─── Mouse (passive, no extra rAF) ───────────────────────────────────────────
+document.addEventListener('mousemove',e=>{mX=e.clientX;mY=e.clientY},{passive:true});
+
+// ─── Single shared rAF loop: cursor + particles ───────────────────────────────
+let particleTick=null;
+(function mainLoop(){
+  requestAnimationFrame(mainLoop);
+  // Cursor lerp
+  cX+=(mX-cX)*.22; cY+=(mY-cY)*.22;
+  rX+=(mX-rX)*.1;  rY+=(mY-rY)*.1;
+  // GPU-composited transform instead of left/top (avoids layout)
+  $cur.style.transform=`translate(${Math.round(cX)-5}px,${Math.round(cY)-5}px)`;
+  $ring.style.transform=`translate(${Math.round(rX)-17}px,${Math.round(rY)-17}px)`;
+  // Particle draw (set by initParticles)
+  if(particleTick) particleTick();
 })();
 
 function hov(on){document.body.classList.toggle('hov',on)}
 
+// ─── Floating Verses ──────────────────────────────────────────────────────────
+// Pure CSS animation; no JS collision detection (was O(n²) each spawn)
 function initFloatingVerses(){
   const cont=document.getElementById('floating-verses');
-  FLOAT_VERSES.forEach((v,i)=>spawnVerse(cont,v,i*1200));
-  setInterval(()=>{
+
+  function spawnVerse(){
     const v=FLOAT_VERSES[Math.floor(Math.random()*FLOAT_VERSES.length)];
-    spawnVerse(cont,v,0);
-  },2800);
+    const el=document.createElement('div');
+    el.className='fv';
+
+    const startX=5+Math.random()*88;
+    const startY=8+Math.random()*80;
+    const tx=(Math.random()-.5)*160;
+    const ty=(Math.random()-.5)*100;
+    const rot=(Math.random()-.5)*6;
+    const dur=18+Math.random()*22;
+    const maxOp=0.28+Math.random()*0.22;
+    const fs=11+Math.random()*5;
+
+    el.style.cssText=`left:${startX}%;top:${startY}%;color:${v.c};--rot:${rot}deg;--tx:${tx}px;--ty:${ty}px;--max-op:${maxOp};animation-duration:${dur}s;text-shadow:0 0 15px ${v.c},0 0 40px ${v.c}60;font-size:${fs}px;`;
+
+    const authorEl=document.createElement('span');
+    authorEl.style.cssText=`display:block;font-family:'Space Mono',monospace;font-style:normal;font-size:.55em;letter-spacing:.3em;opacity:.6;margin-top:3px;color:${v.c};`;
+    authorEl.textContent='— '+v.a;
+    el.textContent=v.t;
+    el.appendChild(authorEl);
+    cont.appendChild(el);
+
+    // Cleanup after animation ends
+    setTimeout(()=>{el.parentNode&&el.parentNode.removeChild(el)},(dur+2)*1000);
+  }
+
+  // Stagger 12 initial verses (reduced from all 51)
+  for(let i=0;i<12;i++) setTimeout(spawnVerse, i*1600);
+  // Slower interval: 3.5s instead of 2.8s
+  setInterval(spawnVerse, 3500);
 }
 
-function spawnVerse(cont,v,delay){
-  const el=document.createElement('div');
-  el.className='fv';
-
-  let startX, startY, attempts=0;
-  const minDistance=18;
-  const maxAttempts=10;
-
-  do {
-    startX=Math.random()*100;
-    startY=10+Math.random()*80;
-    attempts++;
-
-    let tooClose=false;
-    for(let verse of activeVerses){
-      const distX=Math.abs(startX-verse.x);
-      const distY=Math.abs(startY-verse.y);
-      if(distX<minDistance||distY<minDistance){
-        tooClose=true;
-        break;
-      }
-    }
-    if(!tooClose)break;
-  } while(attempts<maxAttempts);
-
-  const tx=(Math.random()-.5)*200;
-  const ty=(Math.random()-.5)*120;
-  const rot=(Math.random()-.5)*6;
-  const dur=18+Math.random()*22;
-  const maxOp=0.3+Math.random()*0.25;
-
-  el.style.cssText=`
-    left:${startX}%;
-    top:${startY}%;
-    color:${v.c};
-    --rot:${rot}deg;
-    --tx:${tx}px;
-    --ty:${ty}px;
-    --max-op:${maxOp};
-    animation-duration:${dur}s;
-    animation-delay:${delay}ms;
-    text-shadow:0 0 15px ${v.c},0 0 40px ${v.c}60,0 0 60px ${v.c}30;
-    font-size:${11+Math.random()*6}px;
-    filter:blur(${Math.random()*.2}px);
-  `;
-
-  const authorEl=document.createElement('span');
-  authorEl.style.cssText=`
-    display:block;
-    font-family:'Space Mono',monospace;
-    font-style:normal;
-    font-size:.55em;
-    letter-spacing:.3em;
-    opacity:.6;
-    margin-top:3px;
-    color:${v.c};
-  `;
-  authorEl.textContent='— '+v.a;
-
-  el.textContent=v.t;
-  el.appendChild(authorEl);
-  cont.appendChild(el);
-
-  const verseTracking={x:startX,y:startY};
-  activeVerses.push(verseTracking);
-
-  const totalDuration=(dur+delay/1000+2)*1000;
-  setTimeout(()=>{
-    if(el.parentNode)el.parentNode.removeChild(el);
-    const idx=activeVerses.indexOf(verseTracking);
-    if(idx>-1)activeVerses.splice(idx,1);
-  },totalDuration);
-}
-
+// ─── Particles ────────────────────────────────────────────────────────────────
+// Merged into mainLoop. Count reduced 80→45. Connections use d² (no sqrt in filter).
 function initParticles(){
   const cv=document.getElementById('pc');
   const ctx=cv.getContext('2d');
   const COLS=['#00f5ff','#ff2d78','#b44fff','#ffd700','#00ff96'];
+
   function rs(){cv.width=innerWidth;cv.height=innerHeight}
-  rs();window.addEventListener('resize',rs);
-  const pts=[];
-  for(let i=0;i<80;i++)pts.push({
-    x:Math.random()*cv.width,y:Math.random()*cv.height,
-    vx:(Math.random()-.5)*.32,vy:(Math.random()-.5)*.32,
-    r:Math.random()*1.3+.28,
+  rs();
+  let resizeTimer;
+  window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(rs,200)},{passive:true});
+
+  const COUNT=45;
+  const pts=Array.from({length:COUNT},()=>({
+    x:Math.random()*cv.width, y:Math.random()*cv.height,
+    vx:(Math.random()-.5)*.28, vy:(Math.random()-.5)*.28,
+    r:Math.random()*1.2+.25,
     c:COLS[Math.floor(Math.random()*COLS.length)],
-    a:Math.random()*.4+.08,
-    ph:Math.random()*Math.PI*2,ps:Math.random()*.016+.004
-  });
-  (function draw(){
-    ctx.clearRect(0,0,cv.width,cv.height);
-    pts.forEach(p=>{
+    a:Math.random()*.38+.07,
+    ph:Math.random()*Math.PI*2, ps:Math.random()*.014+.003
+  }));
+
+  const THRESH2=90*90; // squared threshold — no sqrt needed in filter pass
+
+  particleTick=function(){
+    const W=cv.width, H=cv.height;
+    ctx.clearRect(0,0,W,H);
+
+    for(let i=0;i<COUNT;i++){
+      const p=pts[i];
       p.ph+=p.ps;
       const al=p.a*(.5+.5*Math.sin(p.ph));
-      ctx.save();ctx.globalAlpha=al;ctx.shadowColor=p.c;ctx.shadowBlur=9;
-      ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();ctx.restore();
-      const dx=mX-p.x,dy=mY-p.y,d=Math.hypot(dx,dy);
-      if(d<130&&!activePoem){p.vx+=(dx/d)*.007;p.vy+=(dy/d)*.007}
-      p.vx*=.992;p.vy*=.992;p.x+=p.vx;p.y+=p.vy;
-      if(p.x<0)p.x=cv.width;if(p.x>cv.width)p.x=0;
-      if(p.y<0)p.y=cv.height;if(p.y>cv.height)p.y=0;
-    });
-    for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
-      const d=Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y);
-      if(d<90){ctx.save();ctx.globalAlpha=(1-d/90)*.05;ctx.strokeStyle=pts[i].c;ctx.lineWidth=.4;ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.stroke();ctx.restore()}
+      ctx.globalAlpha=al;
+      ctx.shadowColor=p.c; ctx.shadowBlur=8;
+      ctx.fillStyle=p.c;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.2832); ctx.fill();
+
+      if(!activePoem){
+        const dx=mX-p.x, dy=mY-p.y, d2=dx*dx+dy*dy;
+        if(d2<16900){const d=Math.sqrt(d2); p.vx+=dx/d*.006; p.vy+=dy/d*.006;}
+      }
+      p.vx*=.993; p.vy*=.993;
+      p.x=(p.x+p.vx+W)%W;
+      p.y=(p.y+p.vy+H)%H;
     }
-    requestAnimationFrame(draw);
-  })();
+
+    // Connections: O(n²) with n=45 → ~990 checks, threshold check is cheap
+    ctx.shadowBlur=0;
+    ctx.lineWidth=.4;
+    for(let i=0;i<COUNT-1;i++){
+      for(let j=i+1;j<COUNT;j++){
+        const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
+        const d2=dx*dx+dy*dy;
+        if(d2<THRESH2){
+          ctx.globalAlpha=(1-Math.sqrt(d2)/90)*.05;
+          ctx.strokeStyle=pts[i].c;
+          ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke();
+        }
+      }
+    }
+    ctx.globalAlpha=1;
+  };
 }
 
+// ─── Library build ────────────────────────────────────────────────────────────
 function buildLibrary(){
   const lib=document.getElementById('lib');
+  const frag=document.createDocumentFragment();
+
   SHELVES.forEach((sh,si)=>{
     const shelf=document.createElement('div');
     shelf.className='shelf';
@@ -432,96 +427,74 @@ function buildLibrary(){
 
     sh.poems.forEach((pi,bi)=>{
       row.appendChild(makeBook(POEMS[pi],bi));
-      if(bi===0||bi===2)row.appendChild(makeDecor());
+      if(bi===0||bi===2) row.appendChild(makeDecor());
     });
 
     const plank=document.createElement('div');
     plank.className='splank';
     shelf.append(lbl,row,plank);
-    lib.appendChild(shelf);
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      shelf.style.opacity='1';shelf.style.transform='translateY(0)';
-    }));
+    frag.appendChild(shelf);
   });
+
+  lib.appendChild(frag);
+  // Batch DOM read, then trigger animations in next 2 frames
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    lib.querySelectorAll('.shelf').forEach(s=>{s.style.opacity='1';s.style.transform='translateY(0)'});
+  }));
 }
 
+// ─── Book Tip ─────────────────────────────────────────────────────────────────
+// Uses transform instead of left/top to stay on GPU layer
 function updateBookTipPosition(book){
-  if(!book || !$bookTip.classList.contains('visible')) return;
-
+  if(!book||!$bookTip.classList.contains('visible')) return;
   const rect=book.getBoundingClientRect();
-  const padding=12;
-  const gap=14;
-
-  const tipRect=$bookTip.getBoundingClientRect();
-  const tipW=tipRect.width || 170;
-  const tipH=tipRect.height || 96;
-
+  const tipW=170, tipH=96, gap=14, pad=12;
   let left=rect.left;
-  if(left < padding) left = padding;
-  if(left + tipW > window.innerWidth - padding) left = window.innerWidth - padding - tipW;
-
-  let top=rect.top - tipH - gap;
-  if(top < padding) top = padding;
-
-  $bookTip.style.left = `${Math.round(left)}px`;
-  $bookTip.style.top = `${Math.round(top)}px`;
+  if(left<pad) left=pad;
+  if(left+tipW>innerWidth-pad) left=innerWidth-pad-tipW;
+  let top=rect.top-tipH-gap;
+  if(top<pad) top=pad;
+  $bookTip.style.transform=`translate(${Math.round(left)}px,${Math.round(top)}px)`;
 }
 
-function showBookTip(book, poem){
-  $bookTip.style.setProperty('--bc', poem.color);
-  $bookTip.innerHTML = `
-    <span class="bc-num">Poème ${poem.number}</span>
-    <span class="bc-title">${poem.title}</span>
-    <span class="bc-hint"><span class="bc-dot"></span>Cliquer pour lire</span>
-  `;
-  currentTipTarget = book;
+function showBookTip(book,poem){
+  $bookTip.style.setProperty('--bc',poem.color);
+  $bookTip.innerHTML=`<span class="bc-num">Poème ${poem.number}</span><span class="bc-title">${poem.title}</span><span class="bc-hint"><span class="bc-dot"></span>Cliquer pour lire</span>`;
+  currentTipTarget=book;
   updateBookTipPosition(book);
-  requestAnimationFrame(()=> $bookTip.classList.add('visible'));
+  requestAnimationFrame(()=>$bookTip.classList.add('visible'));
 }
 
 function hideBookTip(){
   $bookTip.classList.remove('visible');
-  currentTipTarget = null;
+  currentTipTarget=null;
 }
 
-function makeBook(poem,idx){
+// ─── Book DOM ─────────────────────────────────────────────────────────────────
+function makeBook(poem){
   const book=document.createElement('div');
   book.className=`book ${poem.gc}`;
 
   const spine=document.createElement('div');
   spine.className='bspine';
-  spine.style.cssText=`width:${poem.w}px;height:${poem.h}px;background:${poem.spine};
-    box-shadow:inset -3px 0 7px rgba(0,0,0,.45),inset 1px 0 2px rgba(255,255,255,.04),inset 0 0 0 1px rgba(255,255,255,.025)`;
+  spine.style.cssText=`width:${poem.w}px;height:${poem.h}px;background:${poem.spine};box-shadow:inset -3px 0 7px rgba(0,0,0,.45),inset 1px 0 2px rgba(255,255,255,.04),inset 0 0 0 1px rgba(255,255,255,.025)`;
 
   const strip=document.createElement('div');
-  strip.style.cssText=`position:absolute;top:0;left:0;right:0;height:4px;
-    background:${poem.color};opacity:.7;box-shadow:0 0 10px ${poem.color},0 0 20px ${poem.color}60`;
+  strip.style.cssText=`position:absolute;top:0;left:0;right:0;height:4px;background:${poem.color};opacity:.7;box-shadow:0 0 10px ${poem.color},0 0 20px ${poem.color}60`;
 
   const strip2=document.createElement('div');
-  strip2.style.cssText=`position:absolute;bottom:0;left:0;right:0;height:2px;
-    background:${poem.color};opacity:.3;box-shadow:0 0 6px ${poem.color}`;
+  strip2.style.cssText=`position:absolute;bottom:0;left:0;right:0;height:2px;background:${poem.color};opacity:.3;box-shadow:0 0 6px ${poem.color}`;
 
   const stitle=document.createElement('span');
   stitle.className='bst';
   stitle.textContent=poem.title;
   spine.append(strip,stitle,strip2);
-
   book.append(spine);
+
   book.addEventListener('click',()=>openPoem(poem));
-
-  book.addEventListener('mouseenter',()=>{
-    hov(true);
-    showBookTip(book, poem);
-  });
-
-  book.addEventListener('mousemove',()=>{
-    updateBookTipPosition(book);
-  });
-
-  book.addEventListener('mouseleave',()=>{
-    hov(false);
-    hideBookTip();
-  });
+  book.addEventListener('mouseenter',()=>{hov(true);showBookTip(book,poem)});
+  book.addEventListener('mousemove',()=>updateBookTipPosition(book),{passive:true});
+  book.addEventListener('mouseleave',()=>{hov(false);hideBookTip()});
 
   return book;
 }
@@ -534,25 +507,36 @@ function makeDecor(){
   return d;
 }
 
+// ─── Parallax: rAF-throttled ──────────────────────────────────────────────────
 function initParallax(){
+  let ticking=false, lastRx=0, lastRy=0;
+  const shelves=()=>document.querySelectorAll('.shelf');
+  const orbs=()=>document.querySelectorAll('.orb');
+
   document.addEventListener('mousemove',e=>{
-    const rx=(e.clientX-innerWidth/2)/(innerWidth/2);
-    const ry=(e.clientY-innerHeight/2)/(innerHeight/2);
-    document.querySelectorAll('.shelf').forEach((sh,i)=>{
-      const d=(i+1)*.6;
-      sh.style.transform=`translateX(${rx*d*7}px) translateY(${ry*d*2.5}px) rotateY(${rx*d*.5}deg)`;
-    });
-    document.querySelectorAll('.orb').forEach((o,i)=>{
-      const f=(i+1)*24;
-      o.style.transform=`translate(${rx*f}px,${ry*f}px)`;
-    });
-  });
+    lastRx=(e.clientX-innerWidth/2)/(innerWidth/2);
+    lastRy=(e.clientY-innerHeight/2)/(innerHeight/2);
+    if(!ticking){
+      ticking=true;
+      requestAnimationFrame(()=>{
+        shelves().forEach((sh,i)=>{
+          const d=(i+1)*.6;
+          sh.style.transform=`translateX(${lastRx*d*7}px) translateY(${lastRy*d*2.5}px) rotateY(${lastRx*d*.5}deg)`;
+        });
+        orbs().forEach((o,i)=>{
+          const f=(i+1)*24;
+          o.style.transform=`translate(${lastRx*f}px,${lastRy*f}px)`;
+        });
+        ticking=false;
+      });
+    }
+  },{passive:true});
 }
 
+// ─── Poem overlay ─────────────────────────────────────────────────────────────
 function openPoem(poem){
   const ov=document.getElementById('pov');
   const pw=document.getElementById('pwrap');
-
   pw.style.setProperty('--pc',poem.color);
 
   pw.innerHTML=`
@@ -571,6 +555,7 @@ function openPoem(poem){
   `;
 
   const body=document.getElementById('pbody');
+  const frag=document.createDocumentFragment();
   poem.stanzas.forEach((lines,si)=>{
     const sDiv=document.createElement('div');
     sDiv.className='pstanza';
@@ -580,27 +565,24 @@ function openPoem(poem){
       span.textContent=line;
       sDiv.appendChild(span);
     });
-    body.appendChild(sDiv);
-
+    frag.appendChild(sDiv);
     if(si<poem.stanzas.length-1){
       const sep=document.createElement('div');
       sep.className='stanza-sep';
       sep.textContent='✦  ✦  ✦';
-      body.appendChild(sep);
+      frag.appendChild(sep);
     }
   });
+  body.appendChild(frag);
 
   initPoemCanvas(poem.color);
-
   ov.classList.add('on');
   document.body.style.overflow='hidden';
   activePoem=poem;
 
   requestAnimationFrame(()=>{
     const lines=pw.querySelectorAll('.pline');
-    lines.forEach((l,i)=>{
-      setTimeout(()=>l.classList.add('vis'),150+i*60);
-    });
+    lines.forEach((l,i)=>setTimeout(()=>l.classList.add('vis'),150+i*55));
   });
 
   const cb=document.getElementById('cbtn');
@@ -618,82 +600,72 @@ function closePoem(){
 document.getElementById('pbdrop').addEventListener('click',closePoem);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&activePoem)closePoem()});
 
+// ─── Poem canvas (self-contained loop, auto-stops on close) ───────────────────
 function initPoemCanvas(color){
   const cv=document.getElementById('ppcv');
-  if(!cv)return;
+  if(!cv) return;
   const wrap=document.getElementById('pwrap');
   cv.width=wrap.clientWidth;
   cv.height=wrap.clientHeight;
   const ctx=cv.getContext('2d');
 
   const hex=color.replace('#','');
-  const r=parseInt(hex.slice(0,2),16),g=parseInt(hex.slice(2,4),16),b=parseInt(hex.slice(4,6),16);
+  const r=parseInt(hex.slice(0,2),16), g=parseInt(hex.slice(2,4),16), b=parseInt(hex.slice(4,6),16);
 
-  const pts=[];
-  for(let i=0;i<30;i++){
-    pts.push({
-      x:Math.random()*cv.width,
-      y:cv.height+Math.random()*100,
-      vx:(Math.random()-.5)*.4,
-      vy:-(Math.random()*.5+.2),
-      r:Math.random()*1.8+.4,
-      a:Math.random()*.5+.2,
-      life:1,decay:Math.random()*.003+.001
-    });
-  }
+  // 20 particles instead of 30
+  const pts=Array.from({length:20},()=>({
+    x:Math.random()*cv.width, y:cv.height+Math.random()*80,
+    vx:(Math.random()-.5)*.35, vy:-(Math.random()*.45+.18),
+    r:Math.random()*1.6+.35, a:Math.random()*.45+.18
+  }));
 
   let running=true;
+  const pov=document.getElementById('pov');
+
   function draw(){
-    if(!running)return;
+    if(!running) return;
+    requestAnimationFrame(draw);
     ctx.clearRect(0,0,cv.width,cv.height);
-    const grd=ctx.createRadialGradient(cv.width/2,cv.height/2,cv.width*.2,cv.width/2,cv.height/2,cv.width*.7);
+
+    const grd=ctx.createRadialGradient(cv.width/2,cv.height*.5,cv.width*.2,cv.width/2,cv.height*.5,cv.width*.7);
     grd.addColorStop(0,`rgba(${r},${g},${b},0)`);
     grd.addColorStop(1,`rgba(${r},${g},${b},0.04)`);
-    ctx.fillStyle=grd;ctx.fillRect(0,0,cv.width,cv.height);
+    ctx.fillStyle=grd; ctx.fillRect(0,0,cv.width,cv.height);
 
-    pts.forEach(p=>{
-      p.x+=p.vx;p.y+=p.vy;p.vx*=.998;
-      if(p.y<-10||p.life<=0){
-        p.x=Math.random()*cv.width;p.y=cv.height+5;
-        p.vx=(Math.random()-.5)*.4;p.vy=-(Math.random()*.5+.15);
-        p.life=1;
-      }
-      ctx.save();
-      ctx.globalAlpha=p.a*p.life;
-      ctx.shadowColor=color;ctx.shadowBlur=10;
-      ctx.fillStyle=color;
-      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();
-      ctx.restore();
-    });
-    requestAnimationFrame(draw);
+    ctx.shadowColor=color; ctx.shadowBlur=9;
+    ctx.fillStyle=color;
+    for(let i=0;i<pts.length;i++){
+      const p=pts[i];
+      p.x+=p.vx; p.y+=p.vy; p.vx*=.998;
+      if(p.y<-10){p.x=Math.random()*cv.width;p.y=cv.height+5;p.vx=(Math.random()-.5)*.35;p.vy=-(Math.random()*.45+.15);}
+      ctx.globalAlpha=p.a;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.2832); ctx.fill();
+    }
+    ctx.globalAlpha=1; ctx.shadowBlur=0;
   }
   draw();
 
-  const obs=new MutationObserver(()=>{
-    if(!document.getElementById('pov').classList.contains('on')){running=false;obs.disconnect()}
-  });
-  obs.observe(document.getElementById('pov'),{attributes:true,attributeFilter:['class']});
+  const obs=new MutationObserver(()=>{if(!pov.classList.contains('on')){running=false;obs.disconnect();}});
+  obs.observe(pov,{attributes:true,attributeFilter:['class']});
 }
 
+// ─── Flicker: CSS class instead of inline style mutation ─────────────────────
 function startFlicker(){
   function flk(){
     const books=document.querySelectorAll('.bspine');
-    if(!books.length){setTimeout(flk,2000);return}
-    const b=books[Math.floor(Math.random()*books.length)];
-    b.style.transition='opacity .05s';b.style.opacity='.3';
-    setTimeout(()=>{b.style.opacity='.85';setTimeout(()=>{b.style.opacity='';b.style.transition=''},100)},50);
+    if(!books.length){setTimeout(flk,2000);return;}
+    books[Math.floor(Math.random()*books.length)].classList.add('flicker');
+    setTimeout(()=>document.querySelectorAll('.bspine.flicker').forEach(b=>b.classList.remove('flicker')),160);
     setTimeout(flk,Math.random()*3000+700);
   }
   setTimeout(flk,3500);
 }
 
-window.addEventListener('resize',()=>{
-  if(currentTipTarget) updateBookTipPosition(currentTipTarget);
-});
-window.addEventListener('scroll',()=>{
-  if(currentTipTarget) updateBookTipPosition(currentTipTarget);
-}, { passive:true });
+// ─── Resize / scroll: passive listeners ──────────────────────────────────────
+window.addEventListener('resize',()=>{if(currentTipTarget)updateBookTipPosition(currentTipTarget)},{passive:true});
+window.addEventListener('scroll',()=>{if(currentTipTarget)updateBookTipPosition(currentTipTarget)},{passive:true});
 
+// ─── Boot ─────────────────────────────────────────────────────────────────────
 window.addEventListener('load',()=>{
   setTimeout(()=>{
     document.getElementById('loader').classList.add('gone');
