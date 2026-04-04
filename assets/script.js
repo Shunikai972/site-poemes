@@ -280,33 +280,111 @@ const FLOAT_VERSES=[
 let mX=innerWidth/2,mY=innerHeight/2,cX=mX,cY=mY,rX=mX,rY=mY;
 let activePoem=null;
 let currentTipTarget=null;
+let floatingVersesTimer=null;
 
 const $cur=document.getElementById('cur');
 const $ring=document.getElementById('cur-ring');
 const $bookTip=document.getElementById('book-tip');
 const activeVerses=[];
 
-document.addEventListener('mousemove',e=>{mX=e.clientX;mY=e.clientY});
+const mqHoverFine=window.matchMedia?window.matchMedia('(hover: hover) and (pointer: fine)'):null;
+const mqReducedMotion=window.matchMedia?window.matchMedia('(prefers-reduced-motion: reduce)'):null;
+const mqSmallScreen=window.matchMedia?window.matchMedia('(max-width: 1200px)'):null;
+const lowPowerDevice=(typeof navigator.hardwareConcurrency==='number'&&navigator.hardwareConcurrency<=4)||
+  (typeof navigator.deviceMemory==='number'&&navigator.deviceMemory<=4);
+const strongCPU=typeof navigator.hardwareConcurrency==='number'&&navigator.hardwareConcurrency>=8;
+const strongMemory=typeof navigator.deviceMemory==='number'&&navigator.deviceMemory>=8;
+
+let hoverUI=mqHoverFine?mqHoverFine.matches:true;
+let perfMode=true;
+
+function applyRuntimeMode(){
+  document.body.classList.toggle('touch-ui',!hoverUI);
+  document.body.classList.toggle('perf-mode',!!perfMode);
+  if($cur)$cur.style.display=hoverUI?'':'none';
+  if($ring)$ring.style.display=hoverUI?'':'none';
+  if(perfMode){
+    if(floatingVersesTimer){
+      clearInterval(floatingVersesTimer);
+      floatingVersesTimer=null;
+    }
+    activeVerses.length=0;
+    const verseCont=document.getElementById('floating-verses');
+    if(verseCont)verseCont.innerHTML='';
+  }else if(document.body.classList.contains('loaded')&&!floatingVersesTimer){
+    initFloatingVerses();
+  }
+  if(!hoverUI){
+    document.body.classList.remove('hov');
+    hideBookTip();
+  }
+}
+
+function updateRuntimeMode(){
+  hoverUI=mqHoverFine?mqHoverFine.matches:hoverUI;
+  const reducedMotion=!!(mqReducedMotion&&mqReducedMotion.matches);
+  const smallScreen=!!(mqSmallScreen&&mqSmallScreen.matches);
+  const highPerfDesktop=hoverUI&&!smallScreen&&!reducedMotion&&!lowPowerDevice&&strongCPU&&strongMemory;
+  perfMode=!highPerfDesktop;
+  applyRuntimeMode();
+}
+
+function onMediaChange(query){
+  if(!query)return;
+  if(typeof query.addEventListener==='function'){
+    query.addEventListener('change',updateRuntimeMode);
+  }else if(typeof query.addListener==='function'){
+    query.addListener(updateRuntimeMode);
+  }
+}
+
+onMediaChange(mqHoverFine);
+onMediaChange(mqReducedMotion);
+onMediaChange(mqSmallScreen);
+updateRuntimeMode();
+
+document.addEventListener('mousemove',e=>{
+  if(!hoverUI)return;
+  mX=e.clientX;
+  mY=e.clientY;
+});
 (function tick(){
-  cX+=(mX-cX)*.22;cY+=(mY-cY)*.22;
-  rX+=(mX-rX)*.1;rY+=(mY-rY)*.1;
-  $cur.style.left=cX+'px';$cur.style.top=cY+'px';
-  $ring.style.left=rX+'px';$ring.style.top=rY+'px';
+  if(hoverUI){
+    cX+=(mX-cX)*.22;cY+=(mY-cY)*.22;
+    rX+=(mX-rX)*.1;rY+=(mY-rY)*.1;
+    $cur.style.left=cX+'px';$cur.style.top=cY+'px';
+    $ring.style.left=rX+'px';$ring.style.top=rY+'px';
+  }
   requestAnimationFrame(tick);
 })();
 
-function hov(on){document.body.classList.toggle('hov',on)}
+function hov(on){
+  if(!hoverUI)return;
+  document.body.classList.toggle('hov',on);
+}
 
 function initFloatingVerses(){
   const cont=document.getElementById('floating-verses');
-  FLOAT_VERSES.forEach((v,i)=>spawnVerse(cont,v,i*1200));
-  setInterval(()=>{
+  if(!cont)return;
+  if(perfMode){
+    cont.innerHTML='';
+    return;
+  }
+  if(floatingVersesTimer){
+    clearInterval(floatingVersesTimer);
+  }
+  const seedCount=Math.min(FLOAT_VERSES.length,10);
+  for(let i=0;i<seedCount;i++){
+    spawnVerse(cont,FLOAT_VERSES[i],i*900);
+  }
+  floatingVersesTimer=setInterval(()=>{
     const v=FLOAT_VERSES[Math.floor(Math.random()*FLOAT_VERSES.length)];
     spawnVerse(cont,v,0);
-  },2800);
+  },3200);
 }
 
 function spawnVerse(cont,v,delay){
+  if(perfMode||activeVerses.length>26)return;
   const el=document.createElement('div');
   el.className='fv';
 
@@ -382,12 +460,19 @@ function spawnVerse(cont,v,delay){
 
 function initParticles(){
   const cv=document.getElementById('pc');
+  if(!cv)return;
+  if(perfMode){
+    cv.style.display='none';
+    return;
+  }
+  cv.style.display='';
   const ctx=cv.getContext('2d');
+  if(!ctx)return;
   const COLS=['#00f5ff','#ff2d78','#b44fff','#ffd700','#00ff96'];
   function rs(){cv.width=innerWidth;cv.height=innerHeight}
   rs();window.addEventListener('resize',rs);
   const pts=[];
-  for(let i=0;i<80;i++)pts.push({
+  for(let i=0;i<64;i++)pts.push({
     x:Math.random()*cv.width,y:Math.random()*cv.height,
     vx:(Math.random()-.5)*.32,vy:(Math.random()-.5)*.32,
     r:Math.random()*1.3+.28,
@@ -403,7 +488,7 @@ function initParticles(){
       ctx.save();ctx.globalAlpha=al;ctx.shadowColor=p.c;ctx.shadowBlur=9;
       ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();ctx.restore();
       const dx=mX-p.x,dy=mY-p.y,d=Math.hypot(dx,dy);
-      if(d<130&&!activePoem){p.vx+=(dx/d)*.007;p.vy+=(dy/d)*.007}
+      if(d<130&&!activePoem&&d>0){p.vx+=(dx/d)*.007;p.vy+=(dy/d)*.007}
       p.vx*=.992;p.vy*=.992;p.x+=p.vx;p.y+=p.vy;
       if(p.x<0)p.x=cv.width;if(p.x>cv.width)p.x=0;
       if(p.y<0)p.y=cv.height;if(p.y>cv.height)p.y=0;
@@ -421,7 +506,11 @@ function buildLibrary(){
   SHELVES.forEach((sh,si)=>{
     const shelf=document.createElement('div');
     shelf.className='shelf';
-    shelf.style.cssText=`opacity:0;transform:translateY(30px);transition:opacity .85s ${si*.25+.3}s,transform .85s ${si*.25+.3}s`;
+    if(perfMode){
+      shelf.style.cssText='opacity:1;transform:translateY(0)';
+    }else{
+      shelf.style.cssText=`opacity:0;transform:translateY(30px);transition:opacity .85s ${si*.25+.3}s,transform .85s ${si*.25+.3}s`;
+    }
 
     const lbl=document.createElement('div');
     lbl.className='slbl';
@@ -439,14 +528,16 @@ function buildLibrary(){
     plank.className='splank';
     shelf.append(lbl,row,plank);
     lib.appendChild(shelf);
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      shelf.style.opacity='1';shelf.style.transform='translateY(0)';
-    }));
+    if(!perfMode){
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        shelf.style.opacity='1';shelf.style.transform='translateY(0)';
+      }));
+    }
   });
 }
 
 function updateBookTipPosition(book){
-  if(!book || !$bookTip.classList.contains('visible')) return;
+  if(!hoverUI||!book||!$bookTip.classList.contains('visible'))return;
 
   const rect=book.getBoundingClientRect();
   const padding=12;
@@ -468,6 +559,7 @@ function updateBookTipPosition(book){
 }
 
 function showBookTip(book, poem){
+  if(!hoverUI)return;
   $bookTip.style.setProperty('--bc', poem.color);
   $bookTip.innerHTML = `
     <span class="bc-num">Poème ${poem.number}</span>
@@ -509,19 +601,21 @@ function makeBook(poem,idx){
   book.append(spine);
   book.addEventListener('click',()=>openPoem(poem));
 
-  book.addEventListener('mouseenter',()=>{
-    hov(true);
-    showBookTip(book, poem);
-  });
+  if(hoverUI){
+    book.addEventListener('mouseenter',()=>{
+      hov(true);
+      showBookTip(book, poem);
+    });
 
-  book.addEventListener('mousemove',()=>{
-    updateBookTipPosition(book);
-  });
+    book.addEventListener('mousemove',()=>{
+      updateBookTipPosition(book);
+    });
 
-  book.addEventListener('mouseleave',()=>{
-    hov(false);
-    hideBookTip();
-  });
+    book.addEventListener('mouseleave',()=>{
+      hov(false);
+      hideBookTip();
+    });
+  }
 
   return book;
 }
@@ -535,16 +629,26 @@ function makeDecor(){
 }
 
 function initParallax(){
+  if(!hoverUI||perfMode)return;
+  const shelves=[...document.querySelectorAll('.shelf')];
+  const orbs=[...document.querySelectorAll('.orb')];
+  let rx=0,ry=0,rafPending=false;
+
   document.addEventListener('mousemove',e=>{
-    const rx=(e.clientX-innerWidth/2)/(innerWidth/2);
-    const ry=(e.clientY-innerHeight/2)/(innerHeight/2);
-    document.querySelectorAll('.shelf').forEach((sh,i)=>{
-      const d=(i+1)*.6;
-      sh.style.transform=`translateX(${rx*d*7}px) translateY(${ry*d*2.5}px) rotateY(${rx*d*.5}deg)`;
-    });
-    document.querySelectorAll('.orb').forEach((o,i)=>{
-      const f=(i+1)*24;
-      o.style.transform=`translate(${rx*f}px,${ry*f}px)`;
+    rx=(e.clientX-innerWidth/2)/(innerWidth/2);
+    ry=(e.clientY-innerHeight/2)/(innerHeight/2);
+    if(rafPending)return;
+    rafPending=true;
+    requestAnimationFrame(()=>{
+      shelves.forEach((sh,i)=>{
+        const d=(i+1)*.6;
+        sh.style.transform=`translateX(${rx*d*7}px) translateY(${ry*d*2.5}px) rotateY(${rx*d*.5}deg)`;
+      });
+      orbs.forEach((o,i)=>{
+        const f=(i+1)*24;
+        o.style.transform=`translate(${rx*f}px,${ry*f}px)`;
+      });
+      rafPending=false;
     });
   });
 }
@@ -552,6 +656,7 @@ function initParallax(){
 function openPoem(poem){
   const ov=document.getElementById('pov');
   const pw=document.getElementById('pwrap');
+  hideBookTip();
 
   pw.style.setProperty('--pc',poem.color);
 
@@ -571,47 +676,54 @@ function openPoem(poem){
   `;
 
   const body=document.getElementById('pbody');
+  const frag=document.createDocumentFragment();
+  let lineIndex=0;
   poem.stanzas.forEach((lines,si)=>{
     const sDiv=document.createElement('div');
     sDiv.className='pstanza';
     lines.forEach((line,li)=>{
       const span=document.createElement('span');
       span.className='pline'+(li===0?' first':'');
+      span.style.setProperty('--line-delay',perfMode?'0ms':`${Math.min(lineIndex*18,420)}ms`);
       span.textContent=line;
       sDiv.appendChild(span);
+      lineIndex++;
     });
-    body.appendChild(sDiv);
+    frag.appendChild(sDiv);
 
     if(si<poem.stanzas.length-1){
       const sep=document.createElement('div');
       sep.className='stanza-sep';
       sep.textContent='✦  ✦  ✦';
-      body.appendChild(sep);
+      frag.appendChild(sep);
     }
   });
+  body.appendChild(frag);
 
   initPoemCanvas(poem.color);
 
   ov.classList.add('on');
   document.body.style.overflow='hidden';
+  document.body.classList.add('poem-open');
   activePoem=poem;
 
   requestAnimationFrame(()=>{
     const lines=pw.querySelectorAll('.pline');
-    lines.forEach((l,i)=>{
-      setTimeout(()=>l.classList.add('vis'),150+i*60);
-    });
+    lines.forEach(l=>l.classList.add('vis'));
   });
 
   const cb=document.getElementById('cbtn');
   cb.addEventListener('click',closePoem);
-  cb.addEventListener('mouseenter',()=>hov(true));
-  cb.addEventListener('mouseleave',()=>hov(false));
+  if(hoverUI){
+    cb.addEventListener('mouseenter',()=>hov(true));
+    cb.addEventListener('mouseleave',()=>hov(false));
+  }
 }
 
 function closePoem(){
   document.getElementById('pov').classList.remove('on');
   document.body.style.overflow='';
+  document.body.classList.remove('poem-open');
   hov(false);
   activePoem=null;
 }
@@ -621,6 +733,10 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&activePoem)closePoe
 function initPoemCanvas(color){
   const cv=document.getElementById('ppcv');
   if(!cv)return;
+  if(perfMode){
+    cv.remove();
+    return;
+  }
   const wrap=document.getElementById('pwrap');
   cv.width=wrap.clientWidth;
   cv.height=wrap.clientHeight;
@@ -630,7 +746,7 @@ function initPoemCanvas(color){
   const r=parseInt(hex.slice(0,2),16),g=parseInt(hex.slice(2,4),16),b=parseInt(hex.slice(4,6),16);
 
   const pts=[];
-  for(let i=0;i<30;i++){
+  for(let i=0;i<22;i++){
     pts.push({
       x:Math.random()*cv.width,
       y:cv.height+Math.random()*100,
@@ -676,6 +792,7 @@ function initPoemCanvas(color){
 }
 
 function startFlicker(){
+  if(perfMode)return;
   function flk(){
     const books=document.querySelectorAll('.bspine');
     if(!books.length){setTimeout(flk,2000);return}
@@ -688,13 +805,16 @@ function startFlicker(){
 }
 
 window.addEventListener('resize',()=>{
+  updateRuntimeMode();
   if(currentTipTarget) updateBookTipPosition(currentTipTarget);
 });
 window.addEventListener('scroll',()=>{
-  if(currentTipTarget) updateBookTipPosition(currentTipTarget);
+  if(hoverUI&&currentTipTarget) updateBookTipPosition(currentTipTarget);
 }, { passive:true });
 
 window.addEventListener('load',()=>{
+  updateRuntimeMode();
+  const bootDelay=perfMode?350:1500;
   setTimeout(()=>{
     document.getElementById('loader').classList.add('gone');
     buildLibrary();
@@ -703,5 +823,5 @@ window.addEventListener('load',()=>{
     initParallax();
     initFloatingVerses();
     startFlicker();
-  },1500);
+  },bootDelay);
 });
